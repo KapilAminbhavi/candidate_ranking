@@ -85,7 +85,7 @@ def vector_embedding():
         st.session_state.loader = PyPDFDirectoryLoader(resume_folder_path)
         st.session_state.docs = st.session_state.loader.load()
 
-        st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
         st.session_state.final_documents = st.session_state.text_splitter.split_documents(st.session_state.docs)
 
         if st.session_state.final_documents:
