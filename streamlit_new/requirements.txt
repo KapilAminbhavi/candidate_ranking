@@ -1,0 +1,7 @@
+streamlit
+langchain_openai
+langchain
+langchain_core
+langchain_community
+faiss-cpu
+python-dotenv
