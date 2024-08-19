@@ -81,11 +81,24 @@ Ideal Candidate Insight: [Provide a comprehensive analysis of the best candidate
 def vector_embedding():
     if "vectors" not in st.session_state:
         st.session_state.embeddings = OpenAIEmbeddings()
-        st.session_state.loader = PyPDFDirectoryLoader("./hello")
+        resume_folder_path = os.path.join(os.path.dirname(__file__), 'hello')
+        st.write(f"Resume folder path: {resume_folder_path}")
+        st.session_state.loader = PyPDFDirectoryLoader(resume_folder_path)
         st.session_state.docs = st.session_state.loader.load()
+
+        st.write(f"Number of documents loaded: {len(st.session_state.docs)}")
+        if st.session_state.docs:
+            st.write(f"First document content: {st.session_state.docs[0].page_content[:500]}")
+
         st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
         st.session_state.final_documents = st.session_state.text_splitter.split_documents(st.session_state.docs)
-        st.session_state.vectors = FAISS.from_documents(st.session_state.final_documents, st.session_state.embeddings)
+
+        if st.session_state.final_documents:
+            st.session_state.vectors = FAISS.from_documents(st.session_state.final_documents, st.session_state.embeddings)
+        else:
+            st.error("No documents were split for vectorization.")
+    else:
+        st.error("No documents were loaded from the resume folder.")
 
 job_description = st.text_area("Enter the Job Description", height=100)
 
