@@ -18,9 +18,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 st.title("Job Description Matcher")
 
-llm = ChatOpenAI(model_name="gpt-4o-mini",
-            temperature=0.2
-)
+llm = ChatOpenAI(model_name="gpt-4o-mini", max_tokens=15000, temperature=0.2)
 
 prompt = ChatPromptTemplate.from_template(
 """
@@ -30,17 +28,21 @@ Your role involves evaluating resumes against job descriptions.
 Recognizing the competitive job market, provide top-notch assistance over the analysis of the resumes against the job description.
 
 1. **Keyword Match Score**:
-   - **Semantic & Contextual Relevance**: [Combined Match Score from Semantic Similarity and Contextual Relevance] - Provide the breakdown of how the semantic similarity and contextual relevance were calculated, including specific technical terms found in the resume and their relevance to the job description.
-   - **Keyword Density**: [Match Score from Keyword Density] - Discuss the frequency and distribution of important keywords in the resume and how it impacts the overall keyword match score.
+   - **Semantic & Contextual Relevance**: Provide the breakdown of how the semantic similarity and contextual relevance were calculated, including specific technical terms found in the resume and their relevance to the job description.
+   - **Keyword Density**: Discuss the frequency and distribution of important keywords in the resume and how it impacts the overall keyword match score.
 
 2. **Skill Experience Match Score**:
-   - **Experience & Skill Level Alignment**: [Combined Match Score from Experience Relevance and Skill Level Alignment] - Break down the relevance of the candidate's past experience and proficiency levels in comparison to the job description's requirements, citing specific roles or projects.
-   - **Recency & Skill Utilization Frequency**: [Combined Match Score from Recency of Experience and Skill Utilization Frequency] - Highlight the weight given to recent experience with key skills and how often and in what contexts the candidate has used the required skills, affecting the match score.
+   - **Experience & Skill Level Alignment**: Break down the relevance of the candidate's past experience and proficiency levels in comparison to the job description's requirements, citing specific roles or projects.
+   - **Recency & Skill Utilization Frequency**: Highlight the weight given to recent experience with key skills and how often and in what contexts the candidate has used the required skills, affecting the match score.
 
 Also, provide a list of the candidate's strongest skills in order of relevance, and compare this order with the priority of skills in the job description. 
 
-**Display all candidates who have an overall match score of 60% or above** without limiting the number of candidates displayed. 
-**Ensure that the skill experience match is given the highest priority when determining the overall match score.** The highest overall match should be reflected accurately in the Ideal Candidate Insight.
+**Important Instructions:**
+1. Display ALL candidates who have an overall match score of 70% or above.
+2. Do not limit the number of candidates displayed.
+3. Ensure that the skill experience match is given the highest priority when determining the overall match score.
+4. The highest overall match should be reflected accurately in the Ideal Candidate Insight.
+5. Make sure to extract and display the candidate's name from each resume. If the name is not clearly stated, use "Unnamed Candidate" followed by a unique identifier.
 
 Today's date is 19th of August, 2024.
 
@@ -50,30 +52,19 @@ Job Description:
 Resume Context:
 {context}
 
-NOTE: I am giving you a sample structure of the final response down below which is for only 2 candidates, but you can print all of them who are actually relevant and not just 2. 
-The final response will strictly be in the following format and this rule applies to all requests:
+The final response will strictly be in the following format for EACH candidate with a 70% or higher overall match:
 
-Candidate1: [Name]
-
+Candidate: [Name or "Unnamed Candidate X" if name not found]
 Keyword Match: [Percentage and a one line explanation]
-
 Skill Experience Match: [Percentage and a one line explanation]
-
 Prominent Skills: [Highlight the most prominent skills for the respective job description in one line.]
-
 Overall Match: [Percentage]
 
-Candidate2: [Name]
-
-Keyword Match: [Percentage and a one line explanation]
-
-Skill Experience Match: [Percentage and a one line explanation]
-
-Prominent Skills: [Highlight the most prominent skills for the respective job description in one line.]
-
-Overall Match: [Percentage]
+After listing all matching candidates, provide:
 
 Ideal Candidate Insight: [Provide a comprehensive analysis of the best candidate's resume among all in relation to the specific job description in just 2 lines and not more than that. Highlight the candidate's key strengths, relevant experiences, and overall fit for the role. Include an evaluation of how well the candidate's skills, experiences, and accomplishments align with the job requirements.]
+
+If no candidates match 60% or above, state: "No candidates meet the 70% overall match threshold for this job description."
 """
 )
 
